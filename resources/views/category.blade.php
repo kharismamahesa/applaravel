@@ -91,6 +91,7 @@
 <script src="{{ url('/gentelella') }}/vendors/jszip/dist/jszip.min.js"></script>
 <script src="{{ url('/gentelella') }}/vendors/pdfmake/build/pdfmake.min.js"></script>
 <script src="{{ url('/gentelella') }}/vendors/pdfmake/build/vfs_fonts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script type="text/javascript">
     function cleardata() {
@@ -166,36 +167,24 @@
                     _token: csrf_token
                 },
                 success: function(response) {
-                    if (response.success) {
-                        // Tampilkan pesan sukses
-                        alert(response.message);
-                        // Reset form atau lakukan tindakan lain, misalnya menutup modal
-                        $('#category').val('');
-                        $('#desc').val('');
-                        $("#modalform").modal('hide');
+                    if (response.success == true) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
                     } else {
-                        // Jika response.success == false (dari response validasi gagal yang dikembalikan)
-                        alert('Error: ' + response.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 },
                 error: function(xhr) {
-                    // Jika terjadi error validasi
-                    if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors; // Ambil error dari response
-                        var errorMessage = '';
-
-                        // Iterasi setiap field yang punya error
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] +
-                                '\n'; // Ambil pesan error pertama dari setiap field
-                        });
-
-                        // Tampilkan error validasi
-                        alert('Validasi gagal:\n' + errorMessage);
-                    } else {
-                        console.log(xhr.responseText); // Menampilkan error lain selain 422
-                        alert('Terjadi kesalahan, silakan coba lagi.');
-                    }
+                    console.log(xhr);
                 }
             });
         });

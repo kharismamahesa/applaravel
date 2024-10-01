@@ -65,6 +65,11 @@ class CategoryController extends Controller
             ]);
         }
 
+        $category = new Category();
+        $category->category = $request->category;
+        $category->desc = $request->desc;
+        $category->save();
+
         return response()->json([
             'success' => true,
             'message' => 'Kategori berhasil disimpan!'

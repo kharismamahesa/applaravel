@@ -25,6 +25,7 @@
 <script src="{{ url('/gentelella') }}/vendors/fastclick/lib/fastclick.js"></script>
 <script src="{{ url('/gentelella') }}/vendors/nprogress/nprogress.js"></script>
 <script src="{{ url('/gentelella') }}/build/js/custom.min.js"></script>
+
 </body>
 
 </html>
