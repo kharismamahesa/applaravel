@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -33,35 +34,41 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validasi input dengan pesan error custom
-            $request->validate([
-                'category' => 'required|string|max:255',
-                'desc' => 'required|string|max:255',
-            ], [
-                'category.required' => 'Lengkapi kategori terlebih dahulu',
-                'desc.required' => 'Lengkapi deskripsi terlebih dahulu',
-            ]);
-
-            // Jika validasi berhasil, simpan data ke database
-            $category = new Category();
-            $category->category = $request->category;
-            $category->desc = $request->desc;
-            $category->save();
-
-            // Kembalikan respons sukses
-            return response()->json([
-                'success' => true,
-                'message' => 'Kategori berhasil disimpan!'
-            ]);
-        } catch (ValidationException $e) {
-            // Jika validasi gagal, kembalikan pesan error custom dalam format JSON
+        if (empty($request->category)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors() // Ambil semua error validasi
-            ], 422); // Status 422 untuk Unprocessable Entity
+                'message' => 'Lengkapi kategori terlebih dahulu',
+            ]);
         }
+        if (empty($request->desc)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lengkapi deskripsi terlebih dahulu',
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'category' => 'required|string|max:255',
+            'desc' => 'required|string',
+        ], [
+            'category.required' => 'Lengkapi kategori terlebih dahulu',
+            'category.string' => 'Kategori harus berupa teks.',
+            'category.max' => 'Kategori tidak boleh lebih dari 255 karakter.',
+            'desc.required' => 'Lengkapi deskripsi terlebih dahulu',
+            'desc.string' => 'Deskripsi harus berupa teks.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori berhasil disimpan!'
+        ]);
     }
 
     /**
