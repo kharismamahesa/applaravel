@@ -35,13 +35,11 @@
                             <button class="btn btn-success btn-block submit">Log In</button>
                         </div>
 
-                        {{-- error here --}}
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">
                                 {{ $errors->first() }}
                             </div>
                         @endif
-                        {{-- error here --}}
 
                         <div class="clearfix"></div>
 

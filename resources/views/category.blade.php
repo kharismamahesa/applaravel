@@ -94,12 +94,13 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script type="text/javascript">
-    function cleardata() {
+    function clearform() {
         $('#category').val('');
         $('#desc').val('');
     }
 
     $(document).ready(function() {
+        clearform();
         var table = $('#kategori_data').DataTable({
             processing: true,
             serverSide: true,
@@ -146,6 +147,7 @@
         });
 
         $('#tambahdata').on('click', function() {
+            clearform();
             $('#myModalLabel').html('<i class="fa fa-plus"></i> Tambah Data');
             $('#btntambahdata').show();
             $('#btnubahdata').hide();
@@ -156,10 +158,9 @@
             var category = $('#category').val();
             var desc = $('#desc').val();
             var csrf_token = $('meta[name="csrf-token"]').attr('content');
-
             $.ajax({
                 type: "POST",
-                url: "{{ route('kategori.store') }}", // Route yang diarahkan ke method store
+                url: "{{ route('kategori.store') }}",
                 dataType: "JSON",
                 data: {
                     category: category,
