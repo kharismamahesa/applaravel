@@ -161,19 +161,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::findOrFail($id);
-        if ($category) {
-            $category->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Kategori berhasil dihapus!',
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Kategori tidak ditemukan!',
-        ]);
+        //
     }
 
     public function getCategoriesData(Request $request)

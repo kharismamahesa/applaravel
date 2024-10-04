@@ -162,47 +162,7 @@
 
         $('#kategori_data').on('click', '.delete-btn', function() {
             var categoryId = $(this).data('id');
-            var csrfToken = $('meta[name="csrf-token"]').attr('content');
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Kategori ini akan dihapus secara permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "/kategori/" + categoryId,
-                        type: 'DELETE',
-                        data: {
-                            _token: csrfToken
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Terhapus!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                });
-                                table.ajax.reload(null, false);
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            // console.log(xhr.responseText);
-                            alert('Terjadi kesalahan pada sistem!');
-                        }
-                    });
-                }
-            });
+            console.log('Delete: ' + categoryId);
         });
 
         $('#refreshdata').on('click', function() {
