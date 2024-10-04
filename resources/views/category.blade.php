@@ -36,7 +36,7 @@
 </div>
 
 
-<div class="modal fade bs-example-modal" id="modalnya" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade bs-example-modal" id="modalform" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
@@ -95,6 +95,7 @@
 
 <script type="text/javascript">
     function clearform() {
+        $('#id').val('');
         $('#category').val('');
         $('#desc').val('');
     }
@@ -139,7 +140,46 @@
 
         $('#kategori_data').on('click', '.delete-btn', function() {
             var categoryId = $(this).data('id');
-            console.log('Delete: ' + categoryId);
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Kategori ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/kategori/" + categoryId,
+                        type: 'DELETE',
+                        data: {
+                            _token: csrfToken
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Terhapus!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                                table.ajax.reload(null, false);
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log(xhr);
+                        }
+                    });
+                }
+            });
         });
 
         $('#refreshdata').on('click', function() {
@@ -151,7 +191,7 @@
             $('#myModalLabel').html('<i class="fa fa-plus"></i> Tambah Data');
             $('#btntambahdata').show();
             $('#btnubahdata').hide();
-            $('#modalnya').modal('show');
+            $('#modalform').modal('show');
         });
 
         $('#btnsimpandata').on('click', function() {
@@ -175,6 +215,9 @@
                             icon: 'success',
                             confirmButtonText: 'OK'
                         });
+                        table.ajax.reload(null, false);
+                        clearform();
+                        $("#modalform").modal('hide');
                     } else {
                         Swal.fire({
                             title: 'Error!',

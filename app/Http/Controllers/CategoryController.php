@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
@@ -16,7 +15,7 @@ class CategoryController extends Controller
     public function index()
     {
         $data = [
-            'title' => 'Master Kategori',
+            'title' => 'Master Kategori Obat',
         ];
         return view('category', $data);
     }
@@ -105,7 +104,20 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+        if ($category) {
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dihapus!',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Kategori tidak ditemukan!',
+        ]);
     }
 
     public function getCategoriesData(Request $request)
