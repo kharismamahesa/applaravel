@@ -57,7 +57,7 @@
                     </div>
                     <div class="form-group row">
                         <label>Deskripsi</label>
-                        <textarea id="desc" class="form-control" placeholder="Deskripsi"></textarea>
+                        <textarea id="desc" class="form-control" rows="4" placeholder="Deskripsi"></textarea>
                     </div>
                 </form>
             </div>
@@ -134,8 +134,30 @@
         });
 
         $('#kategori_data').on('click', '.edit-btn', function() {
+            clearform();
+            $('#myModalLabel').html('<i class="fa fa-edit"></i> Ubah Data');
+            $('#btnsimpandata').hide();
+            $('#btnubahdata').show();
             var categoryId = $(this).data('id');
-            console.log('Edit: ' + categoryId);
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: "/kategori/" + categoryId + "/edit",
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        $('#id').val(categoryId);
+                        $('#category').val(response.data.category);
+                        $('#desc').val(response.data.desc);
+                        $('#modalform').modal('show');
+                    } else {
+                        alert('Gagal mengambil data kategori.');
+                    }
+                },
+                error: function(xhr) {
+                    // console.log(xhr.responseText);
+                    alert('Terjadi kesalahan pada sistem!');
+                }
+            });
         });
 
         $('#kategori_data').on('click', '.delete-btn', function() {
@@ -175,7 +197,8 @@
                             }
                         },
                         error: function(xhr) {
-                            console.log(xhr);
+                            // console.log(xhr.responseText);
+                            alert('Terjadi kesalahan pada sistem!');
                         }
                     });
                 }
@@ -189,7 +212,7 @@
         $('#tambahdata').on('click', function() {
             clearform();
             $('#myModalLabel').html('<i class="fa fa-plus"></i> Tambah Data');
-            $('#btntambahdata').show();
+            $('#btnsimpandata').show();
             $('#btnubahdata').hide();
             $('#modalform').modal('show');
         });
@@ -228,11 +251,51 @@
                     }
                 },
                 error: function(xhr) {
-                    console.log(xhr);
+                    // console.log(xhr.responseText);
+                    alert('Terjadi kesalahan pada sistem!');
                 }
             });
         });
 
+        $('#btnubahdata').on('click', function() {
+            var id = $('#id').val();
+            var category = $('#category').val();
+            var desc = $('#desc').val();
+            var csrf_token = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: "/kategori/" + id,
+                type: 'PUT',
+                data: {
+                    category: category,
+                    desc: desc,
+                    _token: csrf_token,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        table.ajax.reload(null, false);
+                        clearform();
+                        $("#modalform").modal('hide');
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    // console.log(xhr.responseText);
+                    alert('Terjadi kesalahan pada sistem!');
+                }
+            });
+        });
     });
 </script>
 <script src="{{ url('/gentelella') }}/build/js/custom.min.js"></script>

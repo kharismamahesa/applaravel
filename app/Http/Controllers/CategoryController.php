@@ -47,12 +47,13 @@ class CategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'category' => 'required|string|max:255',
+            'category' => 'required|string|max:255|unique:categories,category',
             'desc' => 'required|string',
         ], [
             'category.required' => 'Lengkapi kategori terlebih dahulu',
             'category.string' => 'Kategori harus berupa teks.',
             'category.max' => 'Kategori tidak boleh lebih dari 255 karakter.',
+            'category.unique' => 'Kategori sudah ada, masukkan kategori lain',
             'desc.required' => 'Lengkapi deskripsi terlebih dahulu',
             'desc.string' => 'Deskripsi harus berupa teks.',
         ]);
@@ -88,7 +89,18 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $category = Category::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $category
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori tidak ditemukan!'
+            ], 404);
+        }
     }
 
     /**
@@ -96,7 +108,52 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if (empty($id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan, ID kosong',
+            ]);
+        }
+        if (empty($request->category)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lengkapi kategori terlebih dahulu',
+            ]);
+        }
+        if (empty($request->desc)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lengkapi deskripsi terlebih dahulu',
+            ]);
+        }
+        $validator = Validator::make($request->all(), [
+            'category' => 'required|string|max:255|unique:categories,category,' . $id,
+            'desc' => 'required|string',
+        ], [
+            'category.required' => 'Lengkapi kategori terlebih dahulu',
+            'category.string' => 'Kategori harus berupa teks.',
+            'category.max' => 'Kategori tidak boleh lebih dari 255 karakter.',
+            'category.unique' => 'Kategori sudah ada, masukkan kategori lain',
+            'desc.required' => 'Lengkapi deskripsi terlebih dahulu',
+            'desc.string' => 'Deskripsi harus berupa teks.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        $category = Category::findOrFail($id);
+        $category->category = $request->category;
+        $category->desc = $request->desc;
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori berhasil diperbarui!'
+        ]);
     }
 
     /**
@@ -107,7 +164,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         if ($category) {
             $category->delete();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Kategori berhasil dihapus!',

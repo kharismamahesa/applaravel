@@ -34,4 +34,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
     Route::get('/kategori/data', [CategoryController::class, 'getCategoriesData'])->name('kategori.data');
     Route::delete('/kategori/{id}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+    Route::get('/kategori/{id}/edit', [CategoryController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{id}', [CategoryController::class, 'update'])->name('kategori.update');
 });
