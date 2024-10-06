@@ -58,6 +58,7 @@
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('kategori') }}">Kategori Obat</a></li>
+                                        <li><a href="{{ url('supplier') }}">Supplier</a></li>
                                         <li><a href="#">Obat</a></li>
 
                                     </ul>

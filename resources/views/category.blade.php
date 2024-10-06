@@ -20,8 +20,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Kategori Obat</th>
-                                <th>Desc</th>
-                                <th>Actions</th>
+                                <th>Deskripsi</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                     </table>
@@ -162,7 +162,52 @@
 
         $('#kategori_data').on('click', '.delete-btn', function() {
             var categoryId = $(this).data('id');
-            console.log('Delete: ' + categoryId);
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Kategori ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                // confirmButtonColor: '#3085d6',
+                // cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/kategori/' + categoryId,
+                        type: 'DELETE',
+                        data: {
+                            _token: csrfToken
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Terhapus!',
+                                    response.message,
+                                    'success'
+                                );
+                                $('#kategori_data').DataTable().ajax
+                                    .reload(); // Reload DataTable setelah delete
+                            } else {
+                                Swal.fire(
+                                    'Gagal!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Error!',
+                                'Terjadi kesalahan pada server!',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         });
 
         $('#refreshdata').on('click', function() {

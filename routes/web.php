@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,4 +37,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/kategori/{id}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
     Route::get('/kategori/{id}/edit', [CategoryController::class, 'edit'])->name('kategori.edit');
     Route::put('/kategori/{id}', [CategoryController::class, 'update'])->name('kategori.update');
+
+    //supplier
+    Route::get('/supplier', [SupplierController::class, 'index']);
+    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
+    Route::get('/supplier/data', [SupplierController::class, 'getSuppliersData'])->name('supplier.data');
+    Route::delete('/supplier/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
+    Route::get('/supplier/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+    Route::put('/supplier/{id}', [SupplierController::class, 'update'])->name('supplier.update');
 });
